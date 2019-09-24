@@ -8,7 +8,7 @@ import {html, PolymerElement} from '@polymer/polymer/polymer-element.js';
  * @polymer
  * @demo demo/index.html
  */
-class PouchdbClusterSyncElement extends PolymerElement {
+class PouchDbClusterSyncElement extends PolymerElement {
   static get template() {
     return html`
       <style>
@@ -29,4 +29,4 @@ class PouchdbClusterSyncElement extends PolymerElement {
   }
 }
 
-window.customElements.define('pouchdb-cluster-sync', PouchdbClusterSyncElement);
+window.customElements.define('pouchdb-cluster-sync', PouchDbClusterSyncElement);
