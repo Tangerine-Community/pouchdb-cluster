@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>pouchdb-cluster-sync test</title>
+
+    <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+    <script src="../node_modules/@polymer/test-fixture/test-fixture.js"></script>
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script src="../node_modules/chai/chai.js"></script>
+    <script src="../node_modules/wct-mocha/wct-mocha.js"></script>
+
+  </head>
+  <body>
+
+    <script type="module">
+
+      import { uuidv4 } from 'uuid'
+      import EventEmitterMixin from 'event-emitter-mixin'
+ 
+      class SimulationNetworkInterface extends EventEmitterMixin() {
+
+        constructor(id) {
+          super()
+          if (!window.simulationNetwork) {
+            window.simulationNetwork = {
+              nodes: []
+            }
+          }
+          this.id = id ? id : uuidv4()
+        }
+
+        async join() {
+          window.simulationNetwork.nodes.push({ id: this.id })
+        }
+
+        async getNodes() {
+          return window.simulationNetwork.nodes
+        }
+
+      }
+
+      suite('pouchdb-cluster-sync', () => {
+
+        test('instantiating the class works', () => {
+          const network = new SimulationNetworkInterface()
+          const cpSync = new PouchDbCluster(PouchDB, network)
+        });
+
+        test('joins a cluster', async () => {
+          const TEST_CONTENT_ID = 'TEST_CONTENT_ID'
+          const NODE_1_DB_NAME = 'NODE_1_DB_NAME'
+          const NODE_1_ID = 'NODE_1_ID'
+          const NODE_1_NICK = 'NODE_1_NICK'
+          const NODE_2_DB_NAME = 'NODE_2_DB_NAME'
+          const NODE_2_ID = 'NODE_2_ID'
+          const NODE_2_NICK = 'NODE_2_NICK'
+          const NODE_3_DB_NAME = 'NODE_3_DB_NAME'
+          const NODE_3_ID = 'NODE_3_ID'
+          const NODE_3_NICK = 'NODE_3_NICK'
+          const node1NetworkInterface = new SimulationNetworkInterface()
+          const node2NetworkInterface = new SimulationNetworkInterface()
+          const node3NetworkInterface = new SimulationNetworkInterface()
+          const node1CpSync = new PouchDbCluster(PouchDB, node1NetworkInterface, NODE_1_ID, NODE_1_NICK)
+          const node2CpSync = new PouchDbCluster(PouchDB, node2NetworkInterface, NODE_2_ID, NODE_2_NICK)
+          const node3CpSync = new PouchDbCluster(PouchDB, node3NetworkInterface, NODE_3_ID, NODE_3_NICK)
+          await node1NetworkInterface.join()
+          await node2NetworkInterface.join()
+          await node2NetworkInterface.join()
+          cpSync1.on('new-node', (node) => {
+            console.log(node)
+          })
+          cpSync2.on('new-node', (node) => {
+            console.log(node)
+          })
+          cpSync3.on('new-node', (node) => {
+            console.log(node)
+          })
+          cpSync1.advertise(TEST_CONTENT_ID, NODE_1_DB_NAME)
+          cpSync2.advertise(TEST_CONTENT_ID, NODE_2_DB_NAME)
+          cpSync3.advertise(TEST_CONTENT_ID, NODE_3_DB_NAME)
+          await cpSync1.sync()
+          // ...
+        })
+        test('is notified of another node in the cluster')
+        test('divergent clusters merge')
+        test('notifies nodes that I am consensus maker')
+        test('is notified of consensus maker')
+        
+
+
+      });
+    </script>
+
+  </body>
+</html>
